@@ -1,0 +1,29 @@
+basic quality profile and custom format update steps:
+
+## Custom Format Updates
+
+1. Pull down all existing custom formats
+2. Search all of them for a specification named "trash_id" and has an ID that matches JSON from the guide
+3. For matches: Update it using the CF data from the guide
+4. For CFs in the guide that do not exist in Radarr:
+	a. Build a request object initially using data from the guide JSON
+	b. Add a new `specification` (condition) that:
+		1. has 1 new `field` in it with `value` set to `trash_<TRASHID>`, where TRASHID comes from the guide
+		2. specification `name` set to `"trash_id"`
+		3. specification `negate` set to `true` (so it doesn't interfere with searches)
+	c. Step b only happens when creating whole new CFs
+5. For CFs in Radarr with `trash_id` that do not exist in the guide:
+	a. Delete them from Radarr
+
+## Quality Profile Updates
+
+1. Pull down all quality profiles
+2. Filter out profiles that are not specified in the YAML config
+3. If a quality profile mentioned in user config does not exist in Radarr, show an error in logs and continue
+4. For each quality profile, set all the scores for CFs specified in YAML config. Score priority:
+	a. Score in YAML first, if not specified:
+	b. Score from the guide, if not present:
+	c. Assign a score of 0 and issue a warning in logs
+
+Notes:
+- Custom format scores are in the `formatItems` field
