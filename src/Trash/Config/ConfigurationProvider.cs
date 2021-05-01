@@ -1,7 +1,7 @@
 ﻿namespace Trash.Config
 {
     internal class ConfigurationProvider<T> : IConfigurationProvider<T>
-        where T : BaseConfiguration
+        where T : ServiceConfiguration
     {
         public T? ActiveConfiguration { get; set; }
     }

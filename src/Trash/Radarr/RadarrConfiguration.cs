@@ -6,7 +6,7 @@ using Trash.Radarr.QualityDefinition;
 namespace Trash.Radarr
 {
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-    public class RadarrConfiguration : BaseConfiguration
+    public class RadarrConfiguration : ServiceConfiguration
     {
         public QualityDefinitionConfig? QualityDefinition { get; init; }
 

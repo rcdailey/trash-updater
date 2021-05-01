@@ -11,7 +11,7 @@ using YamlDotNet.Serialization.NamingConventions;
 namespace Trash.Config
 {
     public class ConfigurationLoader<T> : IConfigurationLoader<T>
-        where T : BaseConfiguration
+        where T : ServiceConfiguration
     {
         private readonly IConfigurationProvider<T> _configProvider;
         private readonly IDeserializer _deserializer;

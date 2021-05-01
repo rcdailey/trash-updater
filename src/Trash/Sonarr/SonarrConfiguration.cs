@@ -8,7 +8,7 @@ using Trash.Sonarr.ReleaseProfile;
 namespace Trash.Sonarr
 {
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-    public class SonarrConfiguration : BaseConfiguration
+    public class SonarrConfiguration : ServiceConfiguration
     {
         public IList<ReleaseProfileConfig> ReleaseProfiles { get; set; } = new List<ReleaseProfileConfig>();
         public SonarrQualityDefinitionType? QualityDefinition { get; init; }
