@@ -69,10 +69,10 @@ namespace Trash.Tests.Config
         [Test]
         public void LoadMany_CorrectNumberOfIterations()
         {
-            StreamReader MockYaml(params object[] args)
+            static StreamReader MockYaml(params object[] args)
             {
                 var str = new StringBuilder("sonarr:");
-                const string templateYaml = "\n  - base_url: {0}";
+                const string templateYaml = "\n  - base_url: {0}\n    api_key: abc";
                 str.Append(args.Aggregate("", (current, p) => current + templateYaml.FormatWith(p)));
                 return StreamBuilder.FromString(str.ToString());
             }
@@ -99,9 +99,9 @@ namespace Trash.Tests.Config
 
             var expected = new List<SonarrConfiguration>
             {
-                new() {BaseUrl = "1"},
-                new() {BaseUrl = "2"},
-                new() {BaseUrl = "3"}
+                new() {ApiKey = "abc", BaseUrl = "1"},
+                new() {ApiKey = "abc", BaseUrl = "2"},
+                new() {ApiKey = "abc", BaseUrl = "3"}
             };
 
             var actual = loader.LoadMany(fakeFiles, "sonarr").ToList();
