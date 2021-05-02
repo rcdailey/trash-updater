@@ -56,11 +56,18 @@ namespace Trash
 
         private static void ConfigurationRegistrations(ContainerBuilder builder)
         {
-            builder.RegisterType<ObjectFactory>().As<IObjectFactory>();
-            builder.RegisterGeneric(typeof(ConfigurationLoader<>)).As(typeof(IConfigurationLoader<>));
-            builder.RegisterGeneric(typeof(ConfigurationProvider<>))
-                .As(typeof(IConfigurationProvider<>))
+            builder.RegisterType<ObjectFactory>()
+                .As<IObjectFactory>();
+
+            builder.RegisterGeneric(typeof(ConfigurationLoader<>))
+                .As(typeof(IConfigurationLoader<>));
+
+            builder.RegisterType<ConfigurationProvider>()
+                .As<IConfigurationProvider>()
                 .SingleInstance();
+
+            builder.Register(c => c.Resolve<IConfigurationProvider>().ActiveConfiguration)
+                .As<IServiceConfiguration>();
         }
 
         private static void CommandRegistrations(ContainerBuilder builder)

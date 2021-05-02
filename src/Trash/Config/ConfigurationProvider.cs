@@ -1,8 +1,15 @@
-﻿namespace Trash.Config
+﻿using System;
+
+namespace Trash.Config
 {
-    internal class ConfigurationProvider<T> : IConfigurationProvider<T>
-        where T : ServiceConfiguration
+    internal class ConfigurationProvider : IConfigurationProvider
     {
-        public T? ActiveConfiguration { get; set; }
+        private IServiceConfiguration? _activeConfiguration;
+
+        public IServiceConfiguration ActiveConfiguration
+        {
+            get => _activeConfiguration ?? throw new NullReferenceException("Active configuration has not been set");
+            set => _activeConfiguration = value;
+        }
     }
 }

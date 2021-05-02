@@ -26,7 +26,7 @@ sonarr:
   - strict_negative_scores: true
 ";
             var loader = new ConfigurationLoader<SonarrConfiguration>(
-                Substitute.For<IConfigurationProvider<SonarrConfiguration>>(),
+                Substitute.For<IConfigurationProvider>(),
                 Substitute.For<IFileSystem>(),
                 new DefaultObjectFactory());
 

@@ -13,11 +13,11 @@ namespace Trash.Config
     public class ConfigurationLoader<T> : IConfigurationLoader<T>
         where T : ServiceConfiguration
     {
-        private readonly IConfigurationProvider<T> _configProvider;
+        private readonly IConfigurationProvider _configProvider;
         private readonly IDeserializer _deserializer;
         private readonly IFileSystem _fileSystem;
 
-        public ConfigurationLoader(IConfigurationProvider<T> configProvider, IFileSystem fileSystem,
+        public ConfigurationLoader(IConfigurationProvider configProvider, IFileSystem fileSystem,
             IObjectFactory objectFactory)
         {
             _configProvider = configProvider;

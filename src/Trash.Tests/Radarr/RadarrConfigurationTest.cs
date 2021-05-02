@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.IO.Abstractions;
 using FluentAssertions;
@@ -26,7 +26,7 @@ radarr:
     preferred_ratio: 0.5
 ";
             var loader = new ConfigurationLoader<RadarrConfiguration>(
-                Substitute.For<IConfigurationProvider<RadarrConfiguration>>(),
+                Substitute.For<IConfigurationProvider>(),
                 Substitute.For<IFileSystem>(),
                 new DefaultObjectFactory());
 

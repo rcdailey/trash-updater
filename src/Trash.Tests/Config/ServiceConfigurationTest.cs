@@ -35,7 +35,7 @@ test_service:
 - api_key: b
 ";
             var loader = new ConfigurationLoader<TestServiceConfiguration>(
-                Substitute.For<IConfigurationProvider<TestServiceConfiguration>>(),
+                Substitute.For<IConfigurationProvider>(),
                 Substitute.For<IFileSystem>(),
                 new DefaultObjectFactory());
 
@@ -53,7 +53,7 @@ test_service:
 - base_url: a
 ";
             var loader = new ConfigurationLoader<TestServiceConfiguration>(
-                Substitute.For<IConfigurationProvider<TestServiceConfiguration>>(),
+                Substitute.For<IConfigurationProvider>(),
                 Substitute.For<IFileSystem>(),
                 new DefaultObjectFactory());
 

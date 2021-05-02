@@ -10,9 +10,9 @@ namespace Trash.Sonarr.Api
 {
     public class SonarrApi : ISonarrApi
     {
-        private readonly IConfigurationProvider<SonarrConfiguration> _config;
+        private readonly IServiceConfiguration _config;
 
-        public SonarrApi(IConfigurationProvider<SonarrConfiguration> config)
+        public SonarrApi(IServiceConfiguration config)
         {
             _config = config;
         }
@@ -80,12 +80,7 @@ namespace Trash.Sonarr.Api
 
         private string BaseUrl()
         {
-            if (_config.ActiveConfiguration == null)
-            {
-                throw new InvalidOperationException("No active configuration available for API method");
-            }
-
-            return _config.ActiveConfiguration.BuildUrl();
+            return _config.BuildUrl();
         }
     }
 }

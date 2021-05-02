@@ -30,7 +30,7 @@ namespace Trash.Tests.Config
         public void Load_UsingStream_CorrectParsing()
         {
             var configLoader = new ConfigurationLoader<SonarrConfiguration>(
-                Substitute.For<IConfigurationProvider<SonarrConfiguration>>(),
+                Substitute.For<IConfigurationProvider>(),
                 Substitute.For<IFileSystem>(),
                 new DefaultObjectFactory());
 
@@ -81,7 +81,7 @@ namespace Trash.Tests.Config
             fs.File.OpenText(Arg.Any<string>())
                 .Returns(MockYaml(1, 2), MockYaml(3));
 
-            var provider = Substitute.For<IConfigurationProvider<SonarrConfiguration>>();
+            var provider = Substitute.For<IConfigurationProvider>();
             // var objectFactory = Substitute.For<IObjectFactory>();
             // objectFactory.Create(Arg.Any<Type>())
             // .Returns(t => Substitute.For(new[] {(Type)t[0]}, Array.Empty<object>()));

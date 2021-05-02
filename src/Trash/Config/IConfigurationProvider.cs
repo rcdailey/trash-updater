@@ -1,8 +1,7 @@
 ﻿namespace Trash.Config
 {
-    public interface IConfigurationProvider<T>
-        where T : ServiceConfiguration
+    public interface IConfigurationProvider
     {
-        T? ActiveConfiguration { get; set; }
+        IServiceConfiguration ActiveConfiguration { get; set; }
     }
 }

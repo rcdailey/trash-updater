@@ -2,7 +2,7 @@
 
 namespace Trash.Config
 {
-    public abstract class ServiceConfiguration
+    public abstract class ServiceConfiguration : IServiceConfiguration
     {
         [Required(ErrorMessage = "Property 'base_url' is required")]
         public string BaseUrl { get; init; } = "";

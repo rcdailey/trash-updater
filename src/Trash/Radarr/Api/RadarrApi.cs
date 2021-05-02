@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
@@ -10,11 +9,11 @@ namespace Trash.Radarr.Api
 {
     public class RadarrApi : IRadarrApi
     {
-        private readonly IConfigurationProvider<RadarrConfiguration> _config;
+        private readonly IServiceConfiguration _serviceConfig;
 
-        public RadarrApi(IConfigurationProvider<RadarrConfiguration> config)
+        public RadarrApi(IServiceConfiguration serviceConfig)
         {
-            _config = config;
+            _serviceConfig = serviceConfig;
         }
 
         public async Task<List<RadarrQualityDefinitionItem>> GetQualityDefinition()
@@ -35,12 +34,7 @@ namespace Trash.Radarr.Api
 
         private string BaseUrl()
         {
-            if (_config.ActiveConfiguration == null)
-            {
-                throw new InvalidOperationException("No active configuration available for API method");
-            }
-
-            return _config.ActiveConfiguration.BuildUrl();
+            return _serviceConfig.BuildUrl();
         }
     }
 }
