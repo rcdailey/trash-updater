@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using NSubstitute;
 using NUnit.Framework;
 using Trash.Cache;
+using Trash.Config;
 
 namespace Trash.Tests.Cache
 {
@@ -13,6 +14,22 @@ namespace Trash.Tests.Cache
     [Parallelizable(ParallelScope.All)]
     public class ServiceCacheTest
     {
+        private class Context
+        {
+            public Context(IFileSystem? fs = null)
+            {
+                Filesystem = fs ?? Substitute.For<IFileSystem>();
+                StoragePath = Substitute.For<ICacheStoragePath>();
+                ServiceConfig = Substitute.For<IServiceConfiguration>();
+                Cache = new ServiceCache(Filesystem, StoragePath, ServiceConfig);
+            }
+
+            public ServiceCache Cache { get; }
+            public IServiceConfiguration ServiceConfig { get; }
+            public ICacheStoragePath StoragePath { get; }
+            public IFileSystem Filesystem { get; }
+        }
+
         private class ObjectWithoutAttribute
         {
         }
@@ -34,43 +51,36 @@ namespace Trash.Tests.Cache
         public void Load_NoFileExists_ThrowsException()
         {
             // use a real filesystem to test no file existing
-            var filesystem = new FileSystem();
-            var storagePath = Substitute.For<ICacheStoragePath>();
-            var cache = new ServiceCache(filesystem, storagePath);
+            var ctx = new Context(new FileSystem());
 
-            Action act = () => cache.Load<ObjectWithAttribute>();
+            Action act = () => ctx.Cache.Load<ObjectWithAttribute>();
 
-            act.Should()
-                .Throw<FileNotFoundException>();
+            act.Should().Throw<Exception>();
         }
 
         [Test]
         public void Load_WithAttribute_ParsesCorrectly()
         {
-            var filesystem = Substitute.For<IFileSystem>();
-            var storagePath = Substitute.For<ICacheStoragePath>();
-            var cache = new ServiceCache(filesystem, storagePath);
+            var ctx = new Context();
 
-            storagePath.Path.Returns("testpath");
+            ctx.StoragePath.Path.Returns("testpath");
 
             dynamic testJson = new {TestValue = "Foo"};
-            filesystem.File.ReadAllText(Arg.Any<string>())
+            ctx.Filesystem.File.ReadAllText(Arg.Any<string>())
                 .Returns(_ => JsonConvert.SerializeObject(testJson));
 
-            var obj = cache.Load<ObjectWithAttribute>();
+            var obj = ctx.Cache.Load<ObjectWithAttribute>();
 
             obj.TestValue.Should().Be("Foo");
-            filesystem.File.Received().ReadAllText($"testpath{Path.DirectorySeparatorChar}{ValidObjectName}.json");
+            ctx.Filesystem.File.Received().ReadAllText(Path.Join("testpath", "c59d1c81", $"{ValidObjectName}.json"));
         }
 
         [Test]
         public void Load_WithAttributeInvalidName_ThrowsException()
         {
-            var filesystem = Substitute.For<IFileSystem>();
-            var storagePath = Substitute.For<ICacheStoragePath>();
-            var cache = new ServiceCache(filesystem, storagePath);
+            var ctx = new Context();
 
-            Action act = () => cache.Load<ObjectWithAttributeInvalidChars>();
+            Action act = () => ctx.Cache.Load<ObjectWithAttributeInvalidChars>();
 
             act.Should()
                 .Throw<ArgumentException>()
@@ -80,11 +90,9 @@ namespace Trash.Tests.Cache
         [Test]
         public void Load_WithoutAttribute_Throws()
         {
-            var filesystem = Substitute.For<IFileSystem>();
-            var storagePath = Substitute.For<ICacheStoragePath>();
-            var cache = new ServiceCache(filesystem, storagePath);
+            var ctx = new Context();
 
-            Action act = () => cache.Load<ObjectWithoutAttribute>();
+            Action act = () => ctx.Cache.Load<ObjectWithoutAttribute>();
 
             act.Should()
                 .Throw<ArgumentException>()
@@ -94,28 +102,27 @@ namespace Trash.Tests.Cache
         [Test]
         public void Save_WithAttribute_ParsesCorrectly()
         {
-            var filesystem = Substitute.For<IFileSystem>();
-            var storagePath = Substitute.For<ICacheStoragePath>();
-            var cache = new ServiceCache(filesystem, storagePath);
+            var ctx = new Context();
 
-            storagePath.Path.Returns("testpath");
+            ctx.StoragePath.Path.Returns("testpath");
 
-            cache.Save(new ObjectWithAttribute {TestValue = "Foo"});
+            ctx.Cache.Save(new ObjectWithAttribute {TestValue = "Foo"});
+
+            var expectedParentDirectory = Path.Join("testpath", "c59d1c81");
+            ctx.Filesystem.Directory.Received().CreateDirectory(expectedParentDirectory);
 
             dynamic expectedJson = new {TestValue = "Foo"};
-            var expectedPath = $"testpath{Path.DirectorySeparatorChar}{ValidObjectName}.json";
-            filesystem.File.Received()
+            var expectedPath = Path.Join(expectedParentDirectory, $"{ValidObjectName}.json");
+            ctx.Filesystem.File.Received()
                 .WriteAllText(expectedPath, JsonConvert.SerializeObject(expectedJson, Formatting.Indented));
         }
 
         [Test]
         public void Save_WithAttributeInvalidName_ThrowsException()
         {
-            var filesystem = Substitute.For<IFileSystem>();
-            var storagePath = Substitute.For<ICacheStoragePath>();
-            var cache = new ServiceCache(filesystem, storagePath);
+            var ctx = new Context();
 
-            Action act = () => cache.Save(new ObjectWithAttributeInvalidChars());
+            Action act = () => ctx.Cache.Save(new ObjectWithAttributeInvalidChars());
 
             act.Should()
                 .Throw<ArgumentException>()
@@ -125,11 +132,9 @@ namespace Trash.Tests.Cache
         [Test]
         public void Save_WithoutAttribute_Throws()
         {
-            var filesystem = Substitute.For<IFileSystem>();
-            var storagePath = Substitute.For<ICacheStoragePath>();
-            var cache = new ServiceCache(filesystem, storagePath);
+            var ctx = new Context();
 
-            Action act = () => cache.Save(new ObjectWithoutAttribute());
+            Action act = () => ctx.Cache.Save(new ObjectWithoutAttribute());
 
             act.Should()
                 .Throw<ArgumentException>()

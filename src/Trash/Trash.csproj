@@ -16,6 +16,7 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
     <PackageReference Include="YamlDotNet" />
     <PackageReference Include="System.IO.Abstractions" />
+    <PackageReference Include="System.Data.HashFunction.FNV" />
   </ItemGroup>
 
   <ItemGroup>

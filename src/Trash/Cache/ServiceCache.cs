@@ -1,23 +1,30 @@
 ﻿using System;
+using System.Data.HashFunction.FNV;
 using System.IO;
 using System.IO.Abstractions;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Trash.Config;
 
 namespace Trash.Cache
 {
     public class ServiceCache : IServiceCache
     {
         private static readonly Regex AllowedObjectNameCharacters = new(@"^\w+$", RegexOptions.Compiled);
+        private readonly IServiceConfiguration _config;
         private readonly IFileSystem _fileSystem;
+        private readonly IFNV1a _hash;
         private readonly ICacheStoragePath _storagePath;
 
-        public ServiceCache(IFileSystem fileSystem, ICacheStoragePath storagePath)
+        public ServiceCache(IFileSystem fileSystem, ICacheStoragePath storagePath, IServiceConfiguration config)
         {
             _fileSystem = fileSystem;
             _storagePath = storagePath;
+            _config = config;
+            _hash = FNV1aFactory.Instance.Create(FNVConfig.GetPredefinedConfig(32));
         }
 
         public T Load<T>()
@@ -28,8 +35,9 @@ namespace Trash.Cache
 
         public void Save<T>(T obj)
         {
-            _fileSystem.File.WriteAllText(PathFromAttribute<T>(),
-                JsonConvert.SerializeObject(obj, Formatting.Indented));
+            var path = PathFromAttribute<T>();
+            _fileSystem.Directory.CreateDirectory(Path.GetDirectoryName(path));
+            _fileSystem.File.WriteAllText(path, JsonConvert.SerializeObject(obj, Formatting.Indented));
         }
 
         private static string GetCacheObjectNameAttribute<T>()
@@ -43,6 +51,11 @@ namespace Trash.Cache
             return attribute.Name;
         }
 
+        private string BuildServiceGuid()
+        {
+            return _hash.ComputeHash(Encoding.ASCII.GetBytes(_config.BaseUrl)).AsHexString();
+        }
+
         private string PathFromAttribute<T>()
         {
             var objectName = GetCacheObjectNameAttribute<T>();
@@ -51,7 +64,7 @@ namespace Trash.Cache
                 throw new ArgumentException($"Object name '{objectName}' has unacceptable characters");
             }
 
-            return Path.Join(_storagePath.Path, objectName + ".json");
+            return Path.Join(_storagePath.Path, BuildServiceGuid(), objectName + ".json");
         }
     }
 }

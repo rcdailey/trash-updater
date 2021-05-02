@@ -31,5 +31,6 @@
     <PackageReference Update="Serilog" Version="2.*" />
     <PackageReference Update="System.IO.Abstractions" Version="13.*" />
     <PackageReference Update="YamlDotNet" Version="10.*" />
+    <PackageReference Update="System.Data.HashFunction.FNV" Version="2.*" />
   </ItemGroup>
 </Project>
