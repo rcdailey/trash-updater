@@ -25,7 +25,6 @@ namespace Trash.Config
             _deserializer = new DeserializerBuilder()
                 .WithRequiredPropertyValidation()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
-                // .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .WithTypeConverter(new YamlNullableEnumTypeConverter())
                 .WithObjectFactory(objectFactory)
                 .Build();
