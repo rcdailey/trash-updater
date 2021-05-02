@@ -23,6 +23,7 @@ namespace Trash.Config
             _configProvider = configProvider;
             _fileSystem = fileSystem;
             _deserializer = new DeserializerBuilder()
+                .WithRequiredPropertyValidation()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 // .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .WithTypeConverter(new YamlNullableEnumTypeConverter())

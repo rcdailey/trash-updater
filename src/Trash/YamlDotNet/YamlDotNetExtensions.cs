@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NodeDeserializers;
 
 namespace Trash.YamlDotNet
 {
@@ -10,6 +11,13 @@ namespace Trash.YamlDotNet
         {
             var extractor = deserializer.Deserialize<RootExtractor<T>>(data);
             return extractor.RootObject;
+        }
+
+        public static DeserializerBuilder WithRequiredPropertyValidation(this DeserializerBuilder builder)
+        {
+            return builder
+                .WithNodeDeserializer(inner => new ValidatingDeserializer(inner),
+                    s => s.InsteadOf<ObjectNodeDeserializer>());
         }
 
         [UsedImplicitly(ImplicitUseTargetFlags.Members)]
