@@ -2,7 +2,7 @@
 {
     public interface IServiceCache
     {
-        T Load<T>();
-        void Save<T>(T obj);
+        T? Load<T>() where T : class;
+        void Save<T>(T obj) where T : class;
     }
 }

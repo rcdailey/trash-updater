@@ -48,14 +48,13 @@ namespace Trash.Tests.Cache
         }
 
         [Test]
-        public void Load_NoFileExists_ThrowsException()
+        public void Load_NoFileExists_ReturnsNull()
         {
-            // use a real filesystem to test no file existing
-            var ctx = new Context(new FileSystem());
+            var ctx = new Context();
+            ctx.Filesystem.File.Exists(Arg.Any<string>()).Returns(false);
 
-            Action act = () => ctx.Cache.Load<ObjectWithAttribute>();
-
-            act.Should().Throw<Exception>();
+            var result = ctx.Cache.Load<ObjectWithAttribute>();
+            result.Should().BeNull();
         }
 
         [Test]
@@ -66,12 +65,14 @@ namespace Trash.Tests.Cache
             ctx.StoragePath.Path.Returns("testpath");
 
             dynamic testJson = new {TestValue = "Foo"};
+            ctx.Filesystem.File.Exists(Arg.Any<string>()).Returns(true);
             ctx.Filesystem.File.ReadAllText(Arg.Any<string>())
                 .Returns(_ => JsonConvert.SerializeObject(testJson));
 
             var obj = ctx.Cache.Load<ObjectWithAttribute>();
 
-            obj.TestValue.Should().Be("Foo");
+            obj.Should().NotBeNull();
+            obj!.TestValue.Should().Be("Foo");
             ctx.Filesystem.File.Received().ReadAllText(Path.Join("testpath", "c59d1c81", $"{ValidObjectName}.json"));
         }
 
