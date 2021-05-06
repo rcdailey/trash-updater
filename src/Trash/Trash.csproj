@@ -8,7 +8,6 @@
   <ItemGroup>
     <PackageReference Include="Flurl" />
     <PackageReference Include="Flurl.Http" />
-    <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="CliFx" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Sinks.Console" />

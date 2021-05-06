@@ -8,5 +8,6 @@ namespace Trash.Radarr.Api
     {
         Task<List<RadarrQualityDefinitionItem>> GetQualityDefinition();
         Task<IList<RadarrQualityDefinitionItem>> UpdateQualityDefinition(IList<RadarrQualityDefinitionItem> newQuality);
+        Task<List<CustomFormatItem>> GetCustomFormats();
     }
 }

@@ -7,4 +7,8 @@
     <ProjectReference Include="..\TestLibrary\TestLibrary.csproj" />
     <ProjectReference Include="..\Trash\Trash.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Radarr\CustomFormat\Data\CF_Markdown1.md" />
+  </ItemGroup>
 </Project>

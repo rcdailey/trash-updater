@@ -17,7 +17,7 @@ namespace Trash.Tests.Config
     {
         // This test class must be public otherwise it cannot be deserialized by YamlDotNet
         [UsedImplicitly]
-        public class TestServiceConfiguration : ServiceConfiguration
+        private class TestServiceConfiguration : ServiceConfiguration
         {
             public const string ServiceName = "test_service";
 

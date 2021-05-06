@@ -31,3 +31,8 @@ radarr:
     # Which quality definition in the guide to sync to Radarr. Only choice right now is 'movie'
     quality_definition:
       type: movie
+
+    custom_formats:
+      - names: [BR-DISK]
+        quality_profiles:
+          - name: HD-1080p

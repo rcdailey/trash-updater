@@ -1,0 +1,13 @@
+﻿{
+  "name": "Surround Sound",
+  "includeCustomFormatWhenRenaming": false,
+  "specifications": [{
+    "name": "dts\\-?(hd|x)|truehd|atmos|dd(\\+|p)(5|7)",
+    "implementation": "ReleaseTitleSpecification",
+    "negate": false,
+    "required": false,
+    "fields": {
+      "value": "dts\\-?(hd|x)|truehd|atmos|dd(\\+|p)(5|7)"
+    }
+  }]
+}

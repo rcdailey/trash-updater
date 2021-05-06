@@ -21,7 +21,7 @@ namespace Trash.Tests.CreateConfig
             var filesystem = Substitute.For<IFileSystem>();
             var cmd = new CreateConfigCommand(logger, filesystem);
 
-            await cmd.ExecuteAsync(Substitute.For<IConsole>());
+            await cmd.ExecuteAsync(Substitute.For<IConsole>()).ConfigureAwait(false);
 
             filesystem.File.Received().Exists(Arg.Is<string>(s => s.EndsWith("trash.yml")));
             filesystem.File.Received().WriteAllText(Arg.Is<string>(s => s.EndsWith("trash.yml")), Arg.Any<string>());
@@ -37,7 +37,7 @@ namespace Trash.Tests.CreateConfig
                 Path = "some/other/path.yml"
             };
 
-            await cmd.ExecuteAsync(Substitute.For<IConsole>());
+            await cmd.ExecuteAsync(Substitute.For<IConsole>()).ConfigureAwait(false);
 
             filesystem.File.Received().Exists(Arg.Is("some/other/path.yml"));
             filesystem.File.Received().WriteAllText(Arg.Is("some/other/path.yml"), Arg.Any<string>());

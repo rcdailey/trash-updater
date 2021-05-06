@@ -23,6 +23,7 @@
   <ItemGroup>
     <PackageReference Include="Nerdbank.GitVersioning" Condition=" '$(DisableNbgv)' != 'true' " />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" />
+    <PackageReference Include="JetBrains.Annotations" />
   </ItemGroup>
 
   <ItemGroup Condition="$(ProjectName.EndsWith('.Tests'))">
@@ -36,6 +37,7 @@
     <PackageReference Include="AutofacContrib.NSubstitute" />
     <PackageReference Include="GitHubActionsTestLogger" />
     <PackageReference Include="Serilog.Sinks.TestCorrelator" />
+    <PackageReference Include="Serilog.Sinks.NUnit" />
   </ItemGroup>
 
   <ItemGroup Condition="$(ProjectName.EndsWith('.Tests'))">

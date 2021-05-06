@@ -8,6 +8,8 @@ using Trash.Cache;
 using Trash.Command;
 using Trash.Config;
 using Trash.Radarr.Api;
+using Trash.Radarr.CustomFormat;
+using Trash.Radarr.CustomFormat.Guide;
 using Trash.Radarr.QualityDefinition;
 using Trash.Sonarr.Api;
 using Trash.Sonarr.QualityDefinition;
@@ -52,6 +54,11 @@ namespace Trash
             // Quality Definition Support
             builder.RegisterType<RadarrQualityDefinitionUpdater>();
             builder.RegisterType<RadarrQualityDefinitionGuideParser>().As<IRadarrQualityDefinitionGuideParser>();
+
+            // Custom Format Support
+            builder.RegisterType<CustomFormatUpdater>().As<ICustomFormatUpdater>();
+            builder.RegisterType<CustomFormatGuideParser>().As<ICustomFormatGuideParser>();
+            builder.RegisterType<CustomFormatGuideProcessor>().As<ICustomFormatGuideProcessor>();
         }
 
         private static void ConfigurationRegistrations(ContainerBuilder builder)

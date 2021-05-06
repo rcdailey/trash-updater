@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Radarr Custom Format Support.
+
 ## [1.3.3] - 2021-05-06
 
 ### Fixed

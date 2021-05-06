@@ -32,6 +32,13 @@ namespace Trash.Radarr.Api
                 .ReceiveJson<List<RadarrQualityDefinitionItem>>();
         }
 
+        public async Task<List<CustomFormatItem>> GetCustomFormats()
+        {
+            return await BaseUrl()
+                .AppendPathSegment("customformat")
+                .GetJsonAsync<List<CustomFormatItem>>();
+        }
+
         private string BaseUrl()
         {
             return _serviceConfig.BuildUrl();

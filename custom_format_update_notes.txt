@@ -27,3 +27,34 @@ basic quality profile and custom format update steps:
 
 Notes:
 - Custom format scores are in the `formatItems` field
+
+
+
+
+- Read all CFs from the guide
+- Read the cache
+- Match CFs from the guide to cache entries
+  - Result 1: List of matched entries in cache (as list of ProcessedConfigData)
+  - Result 2: New CFs in config that do not have a cache entry
+  - Result 3: Filtered list of CustomFormatCache that do NOT exist in config (for removal from
+    Radarr & logging)
+  - Result 4: Filtered list of CustomFormatCache that DO exist (to add new ones to later)
+- CustomFormatProcessor (filter out CFs in the guide that aren't in config)
+- Process new CFs (from Result 2) using ConfigProcessor (get list of ProcessedConfigData)
+- Join the two ProcessedConfigData lists
+- Process quality profile scores
+
+- Request all CFs from Radarr
+- For each CF:
+  - Look in cache for CF matching ID *OR* find CF using name.
+  - If matched, update CF object using CF JSON from guide.
+  - If no match, add new CF object using CF JSON from guide
+    - Add new ID + TrashID + Name mapping to cache (Result 4)
+- Push new updated list of CFs to Radarr.
+- Any CFs in cache that do NOT exist (Result 3) in config get removed from Radarr if user
+  specified deletion is enabled.
+- Save the mapping cache
+
+- Request all quality profiles from Radarr
+- For each profile, find an entry by profile name in the processed CF scores
+- For each score, set the value in the profile based on CF ID in the cache (look up by trash ID)
