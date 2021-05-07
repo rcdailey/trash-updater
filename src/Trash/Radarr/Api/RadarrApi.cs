@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Flurl;
 using Flurl.Http;
+using Newtonsoft.Json.Linq;
 using Trash.Config;
 using Trash.Radarr.Api.Objects;
 
@@ -32,11 +34,28 @@ namespace Trash.Radarr.Api
                 .ReceiveJson<List<RadarrQualityDefinitionItem>>();
         }
 
-        public async Task<List<CustomFormatItem>> GetCustomFormats()
+        public async Task<List<JObject>> GetCustomFormats()
         {
             return await BaseUrl()
                 .AppendPathSegment("customformat")
-                .GetJsonAsync<List<CustomFormatItem>>();
+                .GetJsonAsync<List<JObject>>();
+        }
+
+        public async Task<JObject> CreateCustomFormat(JObject newCf)
+        {
+            return await BaseUrl()
+                .AppendPathSegment("customformat")
+                .PostJsonAsync(newCf)
+                .ReceiveJson<JObject>();
+        }
+
+        public async Task<JObject> UpdateCustomFormat(JObject existingCf)
+        {
+            var id = existingCf["id"].Value<int>();
+            return await BaseUrl()
+                .AppendPathSegment($"customformat/{id}")
+                .PutJsonAsync(existingCf)
+                .ReceiveJson<JObject>();
         }
 
         private string BaseUrl()

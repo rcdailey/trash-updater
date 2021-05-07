@@ -58,14 +58,10 @@ namespace Trash.Radarr.CustomFormat
             }
 
             // Grab the cache if one is available
-            CustomFormatCache? cache = null;
-            try
+            var cache = _cache.Load<CustomFormatCache>();
+            if (cache == null)
             {
-                cache = _cache.Load<CustomFormatCache>();
-            }
-            catch (IOException e)
-            {
-                Log.Debug(e, "Custom format cache does not exist; proceeding without it");
+                Log.Debug("Custom format cache does not exist; proceeding without it");
             }
 
             // Step 1: Process and filter the custom formats from the guide.

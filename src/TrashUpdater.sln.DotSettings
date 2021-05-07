@@ -8,5 +8,7 @@
   &amp;lt;option name="myName" value="TrashUpdaterCleanup" /&amp;gt;&#xD;
 &amp;lt;/profile&amp;gt;&lt;/IDEA_SETTINGS&gt;&lt;CSShortenReferences&gt;True&lt;/CSShortenReferences&gt;&lt;CSUpdateFileHeader&gt;True&lt;/CSUpdateFileHeader&gt;&lt;/Profile&gt;</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeCleanup/SilentCleanupProfile/@EntryValue">TrashUpdaterCleanup</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=customformat/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=qualitydefinition/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Radarr/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Sonarr/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

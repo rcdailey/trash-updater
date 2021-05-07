@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using Trash.Cache;
 using Trash.Extensions;
 using Trash.Radarr.Api;
-using Trash.Radarr.Api.Objects;
-using Trash.Radarr.CustomFormat.Models;
+using Trash.Radarr.CustomFormat.Models.Cache;
 
 namespace Trash.Radarr.CustomFormat
 {
@@ -46,29 +45,80 @@ namespace Trash.Radarr.CustomFormat
 
             // todo: when processing quality profile response data, print a log line for each CF and the score it gets
             var radarrCfs = await _api.GetCustomFormats();
-
-            var newRadarrCfs = new List<CustomFormatItem>();
+            var cache = new CustomFormatCache();
 
             foreach (var cf in _guideProcessor.ProcessedCustomFormats)
             {
                 // Try to find match in cache first and in guide by name second
                 var matchingCf =
-                    radarrCfs.FirstOrDefault(rcf => cf.CacheEntry?.CustomFormatId == rcf.Id) ??
-                    radarrCfs.FirstOrDefault(rcf => cf.Name.EqualsIgnoreCase(rcf.Name));
+                    radarrCfs.FirstOrDefault(rcf => cf.CacheEntry?.CustomFormatId == rcf["id"].Value<int>()) ??
+                    radarrCfs.FirstOrDefault(rcf => cf.Name.EqualsIgnoreCase(rcf["name"].Value<string>()));
 
+                var newCf = BuildNewRadarrCf(cf.Json);
+
+                // no match; we add this CF as brand new
                 if (matchingCf == null)
                 {
-                    // no match; we add this CF as brand new
-                    newRadarrCfs.Add(BuildNewRadarrCf(cf));
-                }
+                    Log.Information("Creating New Custom Format: {Name}", newCf["name"].Value<string>());
 
+                    var response = await _api.CreateCustomFormat(newCf);
+
+                    cache.TrashIdMappings.Add(new TrashIdMapping
+                    {
+                        CustomFormatId = response["id"].Value<int>(),
+                        TrashId = cf.TrashId,
+                        CustomFormatName = cf.CacheAwareName
+                    });
+                }
+                // found match; update the existing CF
+                else
+                {
+                    // make a deep copy so that we can compare them. If they haven't changed, we do not upload it.
+                    var cfToUpdate = (JObject) matchingCf.DeepClone();
+                    JsonConvert.PopulateObject(JsonConvert.SerializeObject(newCf), cfToUpdate);
+
+                    var cfName = cfToUpdate["name"].Value<string>();
+
+                    if (!JToken.DeepEquals(matchingCf, cfToUpdate))
+                    {
+                        Log.Information("Updating Existing Custom Format: {Name}", cfName);
+
+                        var response = await _api.UpdateCustomFormat(cfToUpdate);
+
+                        cache.TrashIdMappings.Add(new TrashIdMapping
+                        {
+                            CustomFormatId = response["id"].Value<int>(),
+                            TrashId = cf.TrashId,
+                            CustomFormatName = cf.CacheAwareName
+                        });
+                    }
+                    else
+                    {
+                        Log.Debug("Skipping update of existing CF because there's nothing to update: {Name}", cfName);
+                    }
+                }
             }
         }
 
-        private CustomFormatItem BuildNewRadarrCf(ProcessedCustomFormatData cf)
+        private JObject BuildNewRadarrCf(string jsonPayload)
         {
-            var newCf = JsonConvert.DeserializeObject<CustomFormatItem>(cf.Json);
-            return newCf;
+            // Information on required fields from nitsua
+            /*
+                ok, for the specs.. you need name, implementation, negate, required, fields
+                for fields you need name & value
+                top level you need name, includeCustomFormatWhenRenaming, specs and id (if updating)
+                everything else radarr can handle with backend logic
+             */
+
+            var cf = JObject.Parse(jsonPayload);
+            foreach (var child in cf["specifications"].Children())
+            {
+                var field = child["fields"];
+                field["name"] = "value";
+                child["fields"] = new JArray {field};
+            }
+
+            return cf;
         }
 
         private bool ValidateDataAndCheckShouldProceed(RadarrConfiguration config)

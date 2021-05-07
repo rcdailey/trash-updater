@@ -9,5 +9,7 @@ namespace Trash.Radarr.CustomFormat.Models
         public int? Score { get; init; }
         public string Json { get; set; } = "";
         public TrashIdMapping? CacheEntry { get; set; }
+
+        public string CacheAwareName => CacheEntry?.CustomFormatName ?? Name;
     }
 }
