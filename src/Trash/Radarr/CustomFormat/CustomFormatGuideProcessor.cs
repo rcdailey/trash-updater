@@ -33,7 +33,7 @@ namespace Trash.Radarr.CustomFormat
 
         private ILogger Log { get; }
 
-        public List<ProcessedCustomFormatData> ProcessedCustomFormats
+        public IEnumerable<ProcessedCustomFormatData> ProcessedCustomFormats
             => _processors.CustomFormat.ProcessedCustomFormats;
 
         public List<string> CustomFormatsNotInGuide

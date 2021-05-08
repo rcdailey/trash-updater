@@ -6,7 +6,7 @@ namespace Trash.Radarr.CustomFormat
 {
     internal interface ICustomFormatGuideProcessor
     {
-        List<ProcessedCustomFormatData> ProcessedCustomFormats { get; }
+        IEnumerable<ProcessedCustomFormatData> ProcessedCustomFormats { get; }
         List<string> CustomFormatsNotInGuide { get; }
         List<ProcessedConfigData> ConfigData { get; }
         Dictionary<string, List<QualityProfileCustomFormatScoreEntry>> ProfileScores { get; }
